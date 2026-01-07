@@ -1,5 +1,6 @@
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
+use std::thread;
 
 fn main() {
     let listener = TcpListener::bind("0.0.0.0:8080").unwrap();
@@ -8,8 +9,9 @@ fn main() {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
-                // println!("Got new connection, handling it...");
-                handle_conn(stream);
+                thread::spawn(move || {
+                    handle_conn(stream);
+                });
             }
             Err(e) => {
                 println!("Error: {}", e);
